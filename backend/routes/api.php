@@ -33,7 +33,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 // Services Routes
     Route::post('services', [ServiceController::class, 'store']);
     Route::get('services', [ServiceController::class, 'index']);
-//Temp image Routes
+    Route::get('services/{id}', [ServiceController::class, 'show']);
+    Route::put('services/{id}', [ServiceController::class, 'update']);
+    Route::delete('services/{id}', [ServiceController::class, 'destroy']);
+
+    // Temporary Image Upload Routes
     Route::post('temp-images', [adminTempImageController::class, 'store']);
     Route::get('temp-images', [adminTempImageController::class, 'index']);
 

@@ -65,9 +65,25 @@ class ServiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Service $service)
+    public function show($id)
     {
-        //
+        $service = Service::find($id);
+
+       
+        if($service == null){
+             return response()->json([
+               'status' => false,
+               'message' => 'Service not found'
+           ]);
+        }
+
+
+
+         return response()->json([
+               'status' => true,
+               'data' => $service,
+              
+           ]);
     }
 
     /**
@@ -81,16 +97,76 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Service $service)
+    public function update(Request $request, $id)
     {
-        //
+        $service = Service::find($id);
+
+        if($service == null){
+             return response()->json([
+               'status' => false,
+               'message' => 'Service not found'
+           ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'slug' => 'required|unique:services,slug,'.$id.',id'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => false,
+                
+                'errors' => $validator->errors()
+            ]);
+
+        }
+
+           $service->title = $request->title;
+           $service->short_desc = $request->short_desc;
+           $service->slug = Str::slug($request->slug);
+           $service->content = $request->content;
+           $service->status = $request->status;
+           $service->save();
+
+           // Save Temp Image here
+           if($request->imageId > 0){
+            $tempImage = TempImage::find($request->imageId);
+            if($tempImage != null){
+    
+                $ext = explode('.',$tempImage->name);
+                $ext = last($extArray);
+
+               $fileName = strtotime('now').$service->id.'.'.$ext;
+            }
+           }
+
+           return response()->json([
+               'status' => true,
+               'message' => 'Service  updated successfully'
+           ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Service $service)
+    public function destroy($id)
     {
-        //
+         $service = Service::find($id);
+
+       
+        if($service == null){
+             return response()->json([
+               'status' => false,
+               'message' => 'Service not found'
+           ]);
+        }
+            
+        $service->delete();
+
+         return response()->json([
+               'status' => true,
+               'message'=>'Service deleted successfully.'
+              
+           ]);
     }
 }
