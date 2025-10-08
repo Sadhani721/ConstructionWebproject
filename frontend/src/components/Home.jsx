@@ -19,11 +19,11 @@ import {Pagination} from 'swiper/modules';
 import About from './common/About';
 import ConstructionImg1 from '../assets/images/construction1212.jpg';
 import ConstructionImg2 from '../assets/images/construction4.jpg';
-im
 
 
 
-export const Home = () => {
+
+const Home = () => {
     return(
 
 <>
