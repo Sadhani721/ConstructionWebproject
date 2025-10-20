@@ -11,6 +11,8 @@ import JoditEditor from 'jodit-react';
 const Create = ({ placeholder }) => {
   const editor = useRef(null);
   const [content, setContent] = useState('');
+  const [isDisable, setIsDisable] = useState(false);
+  const [imageId, setImageId] = useState(null);
 
   const config = useMemo(() => ({
     readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -31,7 +33,7 @@ const Create = ({ placeholder }) => {
       // Include the JoditEditor content in the form data
       const newData = {
           ...data,
-          content: content
+          content: content,"image_id": imageId
       };
       
       try {
@@ -58,7 +60,34 @@ const Create = ({ placeholder }) => {
           console.error('Error submitting form:', error);
           toast.error('An error occurred while submitting the form');
       }
+  }
+
+  const handleFile = async(e) => {
+    const formData = new FormData();
+      const file = e.target.files[0];
+      formData.append('image', file);
+
+    
+           await fetch(apiUrl + 'temp-images', {
+              method: 'POST',
+              headers: {
+       
+                  'Accept': 'application/json',
+                  'Authorization': `Bearer ${token()}`
+              },
+              body: formData
+          }).then(response => response.json())
+          .then(result =>{
+         if(result.status==false){
+           toast.error(result.errors.image[0]);
+         }else{
+        setImageId(result.data.id);
+         }
+          })
   } 
+
+
+          
 
   return (
     <>
@@ -137,6 +166,12 @@ const Create = ({ placeholder }) => {
                                           />
                                       </div>
 
+                                         <div className="mb-3">
+                                      <label htmlFor="" className='form-label'>Image</label>
+                                      <br />
+                                    <input onChange={handleFile} type="file" />
+                                      </div>
+                             
                                       <div className="mb-3">
                                       <label htmlFor="" className='form-label'>Status</label>
                                     <select 
@@ -147,7 +182,7 @@ const Create = ({ placeholder }) => {
                                       <option value ="0">Block</option>
                                     </select>
                                       </div>
-                                      <button className='btn btn-primary'>Submit</button>
+                                      <button disabled={isDisable} className='btn btn-primary'>Submit</button>
 
                               </form>
                           </div>

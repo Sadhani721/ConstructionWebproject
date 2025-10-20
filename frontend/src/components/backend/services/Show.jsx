@@ -5,6 +5,7 @@ import Sidebar from '../../common/Sidebar'
 import { useEffect, useState } from 'react'
 import { apiUrl, token } from '../../common/http'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 
 const Show = () => {
@@ -25,6 +26,33 @@ const Show = () => {
     const result =await res.json();
     setServices(result.data)
     console.log(result);
+    }
+
+    const deleteServices = async(id)=>{
+
+        if(confirm("Are you sure want to delete?")){
+       const res =await fetch(apiUrl + 'services/' + id, {
+            'method':'DELETE',
+            'headers': {
+                'Content-Type':'application/json',
+                'Accept':'application/json',
+                'Authorization':`Bearer ${token()}`
+
+        }
+    });
+    const result =await res.json();
+    //setServices(result.data)
+    console.log(result);
+
+    if(result.status==true){
+       const newServices = services.filter(service=>service.id!=id)
+       setServices(newServices);
+       toast.success(result.message)
+    }else{
+        toast.error(result.message)
+    }
+        }
+        
     }
 
     useEffect(()=>{
@@ -71,15 +99,14 @@ const Show = () => {
                                         <td>{service.id}</td>
                                         <td>{service.title}</td>
                                         <td>{service.slug}</td>
-                                        <td>{service.status}</td>
                                         <td>
                                             {
                                                 (service.status==1)? 'Active' : 'Block'
                                             }
                                         </td>
                                         <td>
-                                            <a href="#" className='btn btn-primary btn-sm'>Edit</a>
-                                            <a href="#" className='btn btn-secondary btn-sm ms-2'>Delete</a>
+                                            <Link to={`/admin/services/edit/${service.id}`} className='btn btn-primary btn-sm'>Edit</Link>
+                                            <Link onClick={() => deleteServices(service.id)} href="#" className='btn btn-secondary btn-sm ms-2'>Delete</Link>
                                         </td>
                                     </tr>
                                             )
