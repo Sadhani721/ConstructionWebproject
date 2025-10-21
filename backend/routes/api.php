@@ -4,10 +4,21 @@ use App\Http\Controllers\AuthenticationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ServiceController;
-use App\Http\Controllers\adminTempImageController;
+use App\Http\Controllers\admin\TempImageController;
+use App\Http\Controllers\admin\ProjectController;
+use App\Http\Controllers\front\ServiceController as frontServiceController;
+use App\Http\Controllers\front\ProjectController as frontProjectController;
 
 
 Route::post('authenticate', [AuthenticationController::class, 'authenticate']);
+Route::get('get-services', [frontServiceController::class, 'index']);
+Route::get('get-latest-services', [frontServiceController::class, 'latestServices']); // Added plural version
+
+// Public Projects Routes (Frontend)
+Route::get('get-projects', [frontProjectController::class, 'index']);
+Route::get('get-latest-projects', [frontProjectController::class, 'latestProjects']);
+Route::get('get-project/{id}', [frontProjectController::class, 'show']);
+
 Route::post('login', [AuthenticationController::class, 'authenticate'])->name('login');
 Route::get('logout', [AuthenticationController::class, 'logout']);
 Route::get('services', [ServiceController::class, 'index']);
@@ -38,7 +49,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('services/{id}', [ServiceController::class, 'destroy']);
 
     // Temporary Image Upload Routes
-    Route::post('temp-images', [adminTempImageController::class, 'store']);
-    Route::get('temp-images', [adminTempImageController::class, 'index']);
+    Route::post('temp-images', [TempImageController::class, 'store']);
+    Route::get('temp-images', [TempImageController::class, 'index']);
+
+    // Projects Routes
+    Route::post('projects', [ProjectController::class, 'store']);
+    
 
     });

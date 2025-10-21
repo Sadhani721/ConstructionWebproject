@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\admin;
+
+use App\Http\Controllers\Controller;
 use App\Models\TempImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
-class adminTempImageController extends Controller
+class TempImageController extends Controller
 {
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
