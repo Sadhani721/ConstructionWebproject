@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 
 import Header from './common/Header';
@@ -19,11 +19,28 @@ import {Pagination} from 'swiper/modules';
 import About from './common/About';
 import ConstructionImg1 from '../assets/images/construction1212.jpg';
 import ConstructionImg2 from '../assets/images/construction4.jpg';
+import { apiUrl, token } from './common/http';
+import LatestServices from './common/LatestServices';
 
 
 
 
 const Home = () => {
+  const[services, setServices] = React.useState([]);
+
+ const fetchLatestServices= async ()=>{
+  const res = await fetch(apiUrl + 'get-latest-services?limit=4', {
+              method: 'GET'
+          });
+          
+          const result = await res.json();
+          console.log(result);
+          setServices(result.data);
+ }
+ useEffect(()=>{
+   fetchLatestServices();
+ },[]);
+
     return(
 
 <>
@@ -53,6 +70,7 @@ const Home = () => {
   <About/>
   
             {/* Our services */}
+            <LatestServices/>
                 
             {/*Why choose us */}
                 <section className='section-4 py-5'>
