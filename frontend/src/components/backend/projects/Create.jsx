@@ -1,8 +1,8 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Header from "../../common/Header";
 import Sidebar from "../../common/Sidebar";
-import Footer from "../../common/Footer";
 import { Link, useNavigate } from "react-router-dom";
+import Footer from "../../common/Footer";
 import { useForm } from "react-hook-form";
 import { apiUrl, token } from "../../common/http";
 import { toast } from "react-toastify";
@@ -33,7 +33,7 @@ const Create = ({ placeholder }) => {
 
   const onSubmit = async (data) => {
     const newData = { ...data, content: content, imageId: imageId };
-    const res = await fetch(apiUrl + "services", {
+    const res = await fetch(apiUrl + "projects", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -46,7 +46,7 @@ const Create = ({ placeholder }) => {
 
     if (result.status == true) {
       toast.success(result.message);
-      navigate("/admin/services");
+      navigate("/admin/projects");
     } else {
       toast.error(result.message);
     }
@@ -91,8 +91,8 @@ const Create = ({ placeholder }) => {
               <div className="card shadow border-0">
                 <div className="card-body  p-4">
                   <div className="d-flex justify-content-between">
-                    <h4 className="h5">services/Create</h4>
-                    <Link to="/admin/services" className="btn btn-primary">
+                    <h4 className="h5">projects/Create</h4>
+                    <Link to="/admin/projects" className="btn btn-primary">
                       Back
                     </Link>
                   </div>
@@ -101,7 +101,7 @@ const Create = ({ placeholder }) => {
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
-                        Name
+                        Title
                       </label>
                       <input
                         placeholder="Title"
@@ -153,6 +153,77 @@ const Create = ({ placeholder }) => {
                       ></textarea>
                     </div>
 
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-lable">
+                            Location
+                          </label>
+                          <input
+                            placeholder="location"
+                            {...register("location")}
+                            type="text"
+                            className={`form-control`}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-lable">
+                            Construction_type
+                          </label>
+                          <select
+                            class="form-control"
+                            {...register("construction_type")}
+                          >
+                            <option value="">Construction_Type</option>
+                            <option value="Residential construction">
+                              Residential construction
+                            </option>
+                            <option value="Commercial construction">
+                              Commercial construction
+                            </option>
+                            <option value="Industrial construction">
+                              Industrial construction
+                            </option>
+                            <option value="Infrustructure construction">
+                              Infrustructure construction
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-lable">
+                            Sector
+                          </label>
+                          <select class="form-control" {...register("sector")}>
+                            <option value="">Sector</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Corporate">Corporate</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-lable">
+                            Status
+                          </label>
+                          <select
+                            className="form-control"
+                            {...register("status")}
+                          >
+                            <option value="1">Active</option>
+                            <option value="0">Block</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
                         Content
@@ -173,16 +244,6 @@ const Create = ({ placeholder }) => {
                       </label>
                       <br />
                       <input onChange={handleFile} type="file" />
-                    </div>
-
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-lable">
-                        Status
-                      </label>
-                      <select className="form-control" {...register("status")}>
-                        <option value="1">Active</option>
-                        <option value="0">Block</option>
-                      </select>
                     </div>
 
                     <button disabled={isDisable} className="btn btn-primary">

@@ -1,31 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../common/Header";
-import Footer from "../../common/Footer";
 import Sidebar from "../../common/Sidebar";
-import { apiUrl, token } from "../../common/http";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import Footer from "../../common/Footer";
+import { apiUrl, token } from "../../common/http";
 
 const Show = () => {
-  const [services, setServices] = useState([]);
 
-  const fetchServices = async () => {
-    const res = await fetch(apiUrl + "services", {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token()}`,
-      },
-    });
-    const result = await res.json();
-    setServices(result.data);
-  };
-
-  const deleteService = async (id) => {
-    if (confirm("are you sure you want to delete")) {
-      const res = await fetch(apiUrl + "services/" + id, {
-        method: "DELETE",
+  const [members, setMembers] = useState([]);
+  
+    const fetchMembers = async () => {
+      const res = await fetch(apiUrl + "members", {
+        method: "GET",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
@@ -33,20 +19,34 @@ const Show = () => {
         },
       });
       const result = await res.json();
+      setMembers(result.data);
+    };
 
-      if (result.status == true) {
-        const newServices = services.filter((service) => service.id != id);
-        setServices(newServices);
-        toast.success(result.message);
-      } else {
-        toast.error(result.message);
-      }
-    }
-  };
+    const deleteMember = async (id) => {
+        if (confirm("are you sure you want to delete")) {
+          const res = await fetch(apiUrl + "members/" + id, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token()}`,
+            },
+          });
+          const result = await res.json();
+    
+          if (result.status == true) {
+            const newMembers = members.filter((member) => member.id != id);
+            setMembers(newMembers);
+            toast.success(result.message);
+          } else {
+            toast.error(result.message);
+          }
+        }
+      };
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
+    useEffect(() => {
+      fetchMembers();
+      }, []);
 
   return (
     <>
@@ -62,9 +62,9 @@ const Show = () => {
               <div className="card shadow border-0">
                 <div className="card-body  p-4">
                   <div className="d-flex justify-content-between">
-                    <h4 className="h5">services</h4>
+                    <h4 className="h5">Members</h4>
                     <Link
-                      to="/admin/services/create"
+                      to="/admin/members/create"
                       className="btn btn-primary"
                     >
                       Create
@@ -77,32 +77,31 @@ const Show = () => {
                       <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Slug</th>
+                        <th>Job Title</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {services &&
-                        services.map((service) => {
+                      {members &&
+                        members.map((member) => {
                           return (
-                            <tr key={`service-${service.id}`}>
-                              <td>{service.id}</td>
-                              <td>{service.title}</td>
-                              <td>{service.slug}</td>
-                              <td>{service.status}</td>
+                            <tr key={`member-${member.id}`}>
+                              <td>{member.id}</td>
+                              <td>{member.name}</td>
+                              <td>{member.job_title}</td>
                               <td>
-                                {service.status == 1 ? "Active" : "block"}
+                                {member.status == 1 ? "Active" : "block"}
                               </td>
                               <td>
                                 <Link
-                                  to={`/admin/services/edit/${service.id}`}
+                                  to={`/admin/members/edit/${member.id}`}
                                   className="btn btn-primary btn-sm ms-2"
                                 >
                                   Edit
                                 </Link>
                                 <Link
-                                  onClick={() => deleteService(service.id)}
+                                  onClick={() => deleteMember(member.id)}
                                   href="#"
                                   className="btn btn-danger btn-sm ms-2"
                                 >

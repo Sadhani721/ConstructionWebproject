@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState } from "react";
 import Header from "../../common/Header";
 import Sidebar from "../../common/Sidebar";
 import Footer from "../../common/Footer";
@@ -6,21 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { apiUrl, token } from "../../common/http";
 import { toast } from "react-toastify";
-import JoditEditor from "jodit-react";
 
-const Create = ({ placeholder }) => {
-  const editor = useRef(null);
-  const [content, setContent] = useState("");
+const Create = () => {
   const [isDisable, setIsDisable] = useState(false);
   const [imageId, setImageId] = useState(null);
-
-  const config = useMemo(
-    () => ({
-      readonly: false, // all options from https://xdsoft.net/jodit/docs/,
-      placeholder: placeholder || "Content",
-    }),
-    [placeholder]
-  );
 
   const {
     register,
@@ -32,8 +21,8 @@ const Create = ({ placeholder }) => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, content: content, imageId: imageId };
-    const res = await fetch(apiUrl + "services", {
+    const newData = { ...data, imageId: imageId };
+    const res = await fetch(apiUrl + "testimonials", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -43,10 +32,10 @@ const Create = ({ placeholder }) => {
       body: JSON.stringify(newData),
     });
     const result = await res.json();
-
+    
     if (result.status == true) {
       toast.success(result.message);
-      navigate("/admin/services");
+      navigate("/admin/testimonials");
     } else {
       toast.error(result.message);
     }
@@ -91,8 +80,8 @@ const Create = ({ placeholder }) => {
               <div className="card shadow border-0">
                 <div className="card-body  p-4">
                   <div className="d-flex justify-content-between">
-                    <h4 className="h5">services/Create</h4>
-                    <Link to="/admin/services" className="btn btn-primary">
+                    <h4 className="h5">Testimonials/Create</h4>
+                    <Link to="/admin/testimonials" className="btn btn-primary">
                       Back
                     </Link>
                   </div>
@@ -101,71 +90,56 @@ const Create = ({ placeholder }) => {
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
-                        Name
-                      </label>
-                      <input
-                        placeholder="Title"
-                        {...register("title", {
-                          required: "The title field is required",
-                        })}
-                        type="text"
-                        className={`form-control ${
-                          errors.title && "is-invalid"
-                        }`}
-                      />
-                      {errors.title && (
-                        <p className="invalid-feedback">
-                          {errors.title?.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-lable">
-                        Slug
-                      </label>
-                      <input
-                        placeholder="slug"
-                        {...register("slug", {
-                          required: "The slug field is required",
-                        })}
-                        type="text"
-                        className={`form-control ${
-                          errors.slug && "is-invalid"
-                        }`}
-                      />
-                      {errors.slug && (
-                        <p className="invalid-feedback">
-                          {errors.slug?.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-lable">
-                        Short Description
+                        Testimonial
                       </label>
                       <textarea
-                        placeholder="Short Description"
-                        {...register("short_desc")}
-                        className="form-control"
+                        placeholder="Testimonial"
+                        {...register("testimonial",{
+                          required: "The testimonial field is required",
+                        })}
+                        className={`form-control ${errors.testimonial && "is-invalid"}`}
                         rows={4}
                       ></textarea>
+                      {errors.testimonial && (
+                        <p className="invalid-feedback">
+                          {errors.testimonial?.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
-                        Content
+                        Citation
                       </label>
-                      <JoditEditor
-                        ref={editor}
-                        value={content}
-                        config={config}
-                        tabIndex={1} // tabIndex of textarea
-                        onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-                        onChange={(newContent) => {}}
+                      <input
+                        placeholder="Citation"
+                        {...register("citation", {
+                          required: "The citation field is required",
+                        })}
+                        type="text"
+                        className={`form-control ${
+                          errors.citation && "is-invalid"
+                        }`}
+                      />
+                      {errors.citation && (
+                        <p className="invalid-feedback">
+                          {errors.citation?.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-lable">
+                        Designation
+                      </label>
+                      <input
+                        placeholder="designation"
+                        {...register("designation")}
+                        type="text"
+                        className={'form-control'}
                       />
                     </div>
+
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">

@@ -1,40 +1,50 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState } from "react";
 import Header from "../../common/Header";
 import Sidebar from "../../common/Sidebar";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../../common/Footer";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { apiUrl, token } from "../../common/http";
+import { apiUrl, fileUrl, token } from "../../common/http";
 import { toast } from "react-toastify";
-import JoditEditor from "jodit-react";
+import { useForm } from "react-hook-form";
 
-const Create = ({ placeholder }) => {
-  const editor = useRef(null);
-  const [content, setContent] = useState("");
+const Edit = () => {
   const [isDisable, setIsDisable] = useState(false);
   const [imageId, setImageId] = useState(null);
-
-  const config = useMemo(
-    () => ({
-      readonly: false, // all options from https://xdsoft.net/jodit/docs/,
-      placeholder: placeholder || "Content",
-    }),
-    [placeholder]
-  );
+  const [member, setMember] = useState([]);
+  const params = useParams();
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: async () => {
+      const res = await fetch(apiUrl + "members/" + params.id, {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token()}`,
+        },
+      });
+      const result = await res.json();
+      setMember(result.data);
+      return {
+        name: result.data.name,
+        job_title: result.data.job_title,
+        linkedin_url: result.data.linkedin_url,
+        status: result.data.status,
+      };
+    },
+  });
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, content: content, imageId: imageId };
-    const res = await fetch(apiUrl + "services", {
-      method: "POST",
+    const newData = { ...data, imageId: imageId };
+    const res = await fetch(apiUrl + "members/" + params.id, {
+      method: "PUT",
       headers: {
         "Content-type": "application/json",
         Accept: "application/json",
@@ -46,7 +56,7 @@ const Create = ({ placeholder }) => {
 
     if (result.status == true) {
       toast.success(result.message);
-      navigate("/admin/services");
+      navigate("/admin/members");
     } else {
       toast.error(result.message);
     }
@@ -91,8 +101,8 @@ const Create = ({ placeholder }) => {
               <div className="card shadow border-0">
                 <div className="card-body  p-4">
                   <div className="d-flex justify-content-between">
-                    <h4 className="h5">services/Create</h4>
-                    <Link to="/admin/services" className="btn btn-primary">
+                    <h4 className="h5">Members/Edit</h4>
+                    <Link to="/admin/members" className="btn btn-primary">
                       Back
                     </Link>
                   </div>
@@ -104,66 +114,52 @@ const Create = ({ placeholder }) => {
                         Name
                       </label>
                       <input
-                        placeholder="Title"
-                        {...register("title", {
-                          required: "The title field is required",
+                        placeholder="Name"
+                        {...register("name", {
+                          required: "The name field is required",
                         })}
                         type="text"
                         className={`form-control ${
-                          errors.title && "is-invalid"
+                          errors.name && "is-invalid"
                         }`}
                       />
-                      {errors.title && (
+                      {errors.name && (
                         <p className="invalid-feedback">
-                          {errors.title?.message}
+                          {errors.name?.message}
                         </p>
                       )}
                     </div>
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
-                        Slug
+                        Job Title
                       </label>
                       <input
-                        placeholder="slug"
-                        {...register("slug", {
-                          required: "The slug field is required",
+                        placeholder="Job Title"
+                        {...register("job_title", {
+                          required: "The Job Title field is required",
                         })}
                         type="text"
                         className={`form-control ${
-                          errors.slug && "is-invalid"
+                          errors.job_title && "is-invalid"
                         }`}
                       />
-                      {errors.slug && (
+                      {errors.job_title && (
                         <p className="invalid-feedback">
-                          {errors.slug?.message}
+                          {errors.job_title?.message}
                         </p>
                       )}
                     </div>
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
-                        Short Description
+                        LinkedIn
                       </label>
-                      <textarea
-                        placeholder="Short Description"
-                        {...register("short_desc")}
-                        className="form-control"
-                        rows={4}
-                      ></textarea>
-                    </div>
-
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-lable">
-                        Content
-                      </label>
-                      <JoditEditor
-                        ref={editor}
-                        value={content}
-                        config={config}
-                        tabIndex={1} // tabIndex of textarea
-                        onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-                        onChange={(newContent) => {}}
+                      <input
+                        placeholder="Linkedin url"
+                        {...register("linkedin_url")}
+                        type="text"
+                        className={"form-control"}
                       />
                     </div>
 
@@ -172,8 +168,12 @@ const Create = ({ placeholder }) => {
                         Image
                       </label>
                       <br />
-                      <input onChange={handleFile} type="file" />
+                      <input onChange={handleFile} type="file" accept="image/jpeg,image/png,image/jpg,image/gif" />
                     </div>
+
+                    {member.image && 
+                    <img width={100} src={fileUrl+ "uploads/members/" + member.image} alt=""/>
+                    }
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">
@@ -186,7 +186,7 @@ const Create = ({ placeholder }) => {
                     </div>
 
                     <button disabled={isDisable} className="btn btn-primary">
-                      Submit
+                      Update
                     </button>
                   </form>
                 </div>
@@ -200,4 +200,4 @@ const Create = ({ placeholder }) => {
   );
 };
 
-export default Create;
+export default Edit;
