@@ -12,13 +12,14 @@ const About = () => {
             <div className='col-md-6'>
               <span>about us</span>
               <h2>Crafting structure that a last a lifetime</h2>
-              <p>Building enduring structures requires a comprehensive approach that
-                combine advance materails,resiliant design, routine maitenance, and 
-                sustainable practices.By drawing on historical insights and utilizing 
-                modern technology.</p>
-              <p>Designning structures that stand the test of time involves a seamless
-                blend of clutting-edge materials,durable design, ongoing upkeep, advance
-                eco-friendly practices.By combining lessons from the past with the power of modern technology.</p>
+              <p>Building enduring structures requires a comprehensive approach that combines 
+              advanced materials, resilient designs, regular maintenance, and sustainable 
+              practices. By learning from the past and integrating modern technology, we ensure 
+              lasting strength and timeless quality in every project we undertake.</p>
+              <p>Designing structures that stand the test of time involves a perfect balance of 
+                cutting-edge materials, durable architecture, consistent upkeep, and innovative 
+                eco-friendly solutions. Our expertise blends historical insights with modern 
+                engineering excellence to create buildings that truly endure.</p>
     
     
             </div>

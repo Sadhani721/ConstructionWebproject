@@ -74,10 +74,6 @@ const Projects = () => {
                 })}
             </div>
           </div>
-
-          <div className="text-center">
-            <a className="btn btn-primary small">View all Projects</a>
-          </div>
         </section>
       </main>
       <Footer />

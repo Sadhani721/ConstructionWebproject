@@ -95,13 +95,13 @@ const ShowTestimonial = () => {
                               </svg>
                             </div>
                             <div className="content pt-4 pb-2">
-                              <p>{testimonial.testimonial}</p>
+                              <p className="testimonial-text">{testimonial.testimonial}</p>
                             </div>
                             <hr />
                             <div className="d-flex meta">
                               <div>
                                 {/* <img src={AvatarImg} alt="" width={50} /> */}
-                                <img src={`${fileUrl}uploads/testimonials/${testimonial.image}`} width={50} />
+                                <img src={`${fileUrl}uploads/testimonials/${testimonial.image}`} width={50} alt={testimonial.citation} className="avatar" />
                               </div>
                               <div className="ps-3">
                                 <div className="name">{testimonial.citation}</div>

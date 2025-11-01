@@ -70,9 +70,7 @@ const Services = () => {
                       }
           </div>
         </div>
-        <div className="text-center">
-          <a className="btn btn-primary small">View all Services</a>
-        </div>
+        
       </section>
 
       <Footer />

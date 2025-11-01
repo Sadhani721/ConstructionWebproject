@@ -9,7 +9,6 @@ import About from './components/About';
 import Services from './components/frontend/Services';
 import "./assets/css/style.scss";
 import Project from './components/frontend/Project';
-import Blogs from './components/frontend/Blogs';
 import Contact from './components/frontend/Contact';
 import Login from './components/backend/Login';
  import { ToastContainer } from 'react-toastify';
@@ -48,7 +47,6 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/projects" element={<Project/>} />
-          <Route path="/blogs" element={<Blogs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/service/:id" element={<ServiceDetail />} />
           <Route path="/project/:id" element={<ProjectDetail />} />

@@ -8,7 +8,7 @@ const LatestProjects = () => {
   const [projects, setProjects] = useState([]);
 
   const fetchLatestProjects = async () => {
-    const res = await fetch(apiUrl + "get-latest-projects?limit=1", {
+    const res = await fetch(apiUrl + "get-latest-projects?limit=3", {
       method: "GET"
     });
     const result = await res.json();
@@ -36,10 +36,10 @@ const LatestProjects = () => {
           {projects &&
             projects.map((project) => {
               return (
-                <div className="col-md-3 col-lg-3">
+                <div className="col-md-4 col-lg-4" key={project.id}>
                   <div className="item">
                     <div className="service-image">
-                      <img src={`${fileUrl}uploads/projects/small/${project.image}`} className="w-100" />
+                      <img src={`${fileUrl}uploads/projects/small/${project.image}`} className="w-100" alt={project.title} />
                     </div>
                     <div className="service-body">
                       <div className="service-title">
@@ -60,7 +60,7 @@ const LatestProjects = () => {
       </div>
 
       <div className="text-center">
-        <a className="btn btn-primary small">View all Projects</a>
+        <Link to="/projects" className="btn btn-primary small">View all Projects</Link>
       </div>
     </section>
   );
