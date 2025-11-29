@@ -6,18 +6,35 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\admin\ProjectController;
+use App\Http\Controllers\admin\TestimonialController;
 use App\Http\Controllers\front\ServiceController as frontServiceController;
 use App\Http\Controllers\front\ProjectController as frontProjectController;
+use App\Http\Controllers\front\TestimonialController as frontTestimonialController;
+use App\Http\Controllers\admin\MemberController;
+use App\Http\Controllers\front\MemberController as frontMemberController;
 
 
 Route::post('authenticate', [AuthenticationController::class, 'authenticate']);
 Route::get('get-services', [frontServiceController::class, 'index']);
 Route::get('get-latest-services', [frontServiceController::class, 'latestServices']); // Added plural version
+Route::get('get-service/{id}', [frontServiceController::class, 'service']); // Added missing service detail route
 
 // Public Projects Routes (Frontend)
 Route::get('get-projects', [frontProjectController::class, 'index']);
 Route::get('get-latest-projects', [frontProjectController::class, 'latestProjects']);
 Route::get('get-project/{id}', [frontProjectController::class, 'show']);
+
+// Public Testimonials Routes (Frontend)
+Route::get('testimonials', [frontTestimonialController::class, 'index']);
+Route::get('get-testimonials', [frontTestimonialController::class, 'index']);
+Route::get('get-latest-testimonials', [frontTestimonialController::class, 'latestTestimonials']);
+Route::get('get-testimonial/{id}', [frontTestimonialController::class, 'show']);
+
+// Public Members Routes (Frontend)
+Route::get('members', [frontMemberController::class, 'index']);
+Route::get('get-members', [frontMemberController::class, 'index']);
+Route::get('get-latest-members', [frontMemberController::class, 'latestMembers']);
+Route::get('get-member/{id}', [frontMemberController::class, 'show']);
 
 Route::post('login', [AuthenticationController::class, 'authenticate'])->name('login');
 Route::get('logout', [AuthenticationController::class, 'logout']);
@@ -28,6 +45,38 @@ Route::post('services', [ServiceController::class, 'store']);
 // Debug route to test if API is working
 Route::get('test', function() {
     return response()->json(['message' => 'API is working!', 'status' => true]);
+})->middleware('cors');
+
+// Test CORS route
+Route::options('/{any}', function() {
+    return response('', 200);
+})->where('any', '.*')->middleware('cors');
+
+// Debug route to check users
+Route::get('check-user', function() {
+    $user = \App\Models\User::where('email', 'admin@example.com')->first();
+    if ($user) {
+        return response()->json([
+            'status' => true, 
+            'user_exists' => true,
+            'email' => $user->email,
+            'name' => $user->name,
+            'password_check' => \Illuminate\Support\Facades\Hash::check('admin123', $user->password)
+        ]);
+    }
+    return response()->json(['status' => false, 'user_exists' => false]);
+});
+
+// Test login route
+Route::post('test-login', function(\Illuminate\Http\Request $request) {
+    return response()->json([
+        'received_email' => $request->email,
+        'received_password' => $request->password,
+        'auth_attempt' => \Illuminate\Support\Facades\Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])
+    ]);
 });
 
 //Route::get('/user', function (Request $request) {
@@ -54,6 +103,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Projects Routes
     Route::post('projects', [ProjectController::class, 'store']);
+    
+    // Testimonials Routes (Admin)
+    Route::post('testimonials', [TestimonialController::class, 'store']);
+    Route::get('admin/testimonials', [TestimonialController::class, 'index']);
+    Route::get('admin/testimonials/{id}', [TestimonialController::class, 'show']);
+    Route::put('testimonials/{id}', [TestimonialController::class, 'update']);
+    Route::delete('testimonials/{id}', [TestimonialController::class, 'destroy']);
+    
+    // Members Routes (Admin)
+    Route::post('members', [MemberController::class, 'store']);
+    Route::get('admin/members', [MemberController::class, 'index']);
+    Route::get('admin/members/{id}', [MemberController::class, 'show']);
+    Route::put('members/{id}', [MemberController::class, 'update']);
+    Route::delete('members/{id}', [MemberController::class, 'destroy']);
     
 
     });
