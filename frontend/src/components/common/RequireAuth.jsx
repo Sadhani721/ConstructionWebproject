@@ -6,7 +6,8 @@ import { Navigate } from 'react-router-dom'
 const RequireAuth = ({ children }) => {
   const { user } = useContext(AuthContext)
 
-  if (!user) {
+  // Check if user exists and has a valid token
+  if (!user || !user.token) {
     return <Navigate to='/admin/login' />
   }
 

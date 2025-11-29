@@ -3,11 +3,12 @@ import { createContext, useState } from "react";
 export const AuthContext = createContext(null);
 
 export const AuthProvider=({children})=>{
-    const userInfo =localStorage.getItem('userInfo');
-    const [user,setUser]=useState(userInfo);
+    const userInfo = localStorage.getItem('userInfo');
+    const [user,setUser]=useState(userInfo ? JSON.parse(userInfo) : null);
 
-    const login =(user)=>{
-        setUser(user)
+    const login =(userInfo)=>{
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        setUser(userInfo);
     }
 
     const logout =()=>{
