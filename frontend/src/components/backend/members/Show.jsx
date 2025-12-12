@@ -4,49 +4,63 @@ import Sidebar from "../../common/Sidebar";
 import { Link } from "react-router-dom";
 import Footer from "../../common/Footer";
 import { apiUrl, token } from "../../common/http";
+import { toast } from "react-toastify";
 
 const Show = () => {
 
   const [members, setMembers] = useState([]);
-  
-    const fetchMembers = async () => {
-      const res = await fetch(apiUrl + "members", {
-        method: "GET",
+
+  const fetchMembers = async () => {
+    const res = await fetch(apiUrl + "members", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token()}`,
+      },
+    });
+    const result = await res.json();
+    setMembers(result.data);
+  };
+
+  const deleteMember = async (id) => {
+    console.log("Delete button clicked for member ID:", id);
+
+    try {
+      console.log("Making DELETE request to:", apiUrl + "members/" + id);
+      console.log("Token:", token());
+
+      const res = await fetch(apiUrl + "members/" + id, {
+        method: "DELETE",
         headers: {
           "Content-type": "application/json",
           Accept: "application/json",
           Authorization: `Bearer ${token()}`,
         },
       });
+
+      console.log("Response status:", res.status);
       const result = await res.json();
-      setMembers(result.data);
-    };
+      console.log("Response data:", result);
 
-    const deleteMember = async (id) => {
-        if (confirm("are you sure you want to delete")) {
-          const res = await fetch(apiUrl + "members/" + id, {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${token()}`,
-            },
-          });
-          const result = await res.json();
-    
-          if (result.status == true) {
-            const newMembers = members.filter((member) => member.id != id);
-            setMembers(newMembers);
-            toast.success(result.message);
-          } else {
-            toast.error(result.message);
-          }
-        }
-      };
+      if (result.status == true) {
+        const newMembers = members.filter((member) => member.id != id);
+        console.log("Filtered members:", newMembers);
+        setMembers(newMembers);
+        toast.success(result.message);
+      } else {
+        console.error("Delete failed:", result.message);
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting member:", error);
+      toast.error("Failed to delete member. Please try again.");
+    }
+  };
 
-    useEffect(() => {
-      fetchMembers();
-      }, []);
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
   return (
     <>
@@ -100,13 +114,13 @@ const Show = () => {
                                 >
                                   Edit
                                 </Link>
-                                <Link
+                                <button
+                                  type="button"
                                   onClick={() => deleteMember(member.id)}
-                                  href="#"
                                   className="btn btn-danger btn-sm ms-2"
                                 >
                                   DELETE
-                                </Link>
+                                </button>
                               </td>
                             </tr>
                           );

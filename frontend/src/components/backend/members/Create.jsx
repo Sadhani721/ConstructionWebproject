@@ -13,60 +13,60 @@ const Create = () => {
   const [imageId, setImageId] = useState(null);
 
   const {
-      register,
-      handleSubmit,
-      watch,
-      formState: { errors },
-    } = useForm();
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-      const newData = { ...data, imageId: imageId };
-      const res = await fetch(apiUrl + "members", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token()}`,
-        },
-        body: JSON.stringify(newData),
+    const newData = { ...data, image_id: imageId };
+    const res = await fetch(apiUrl + "members", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token()}`,
+      },
+      body: JSON.stringify(newData),
+    });
+    const result = await res.json();
+
+    if (result.status == true) {
+      toast.success(result.message);
+      navigate("/admin/members");
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const handleFile = async (e) => {
+    const formData = new FormData();
+    const file = e.target.files[0];
+    formData.append("image", file);
+    setIsDisable(true);
+
+    await fetch(apiUrl + "temp-images", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token()}`,
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        setIsDisable(false);
+        if (result.status == false) {
+          toast.error(result.errors.image[0]);
+        } else {
+          setImageId(result.data.id);
+        }
       });
-      const result = await res.json();
-  
-      if (result.status == true) {
-        toast.success(result.message);
-        navigate("/admin/members");
-      } else {
-        toast.error(result.message);
-      }
-    };
-  
-    const handleFile = async (e) => {
-      const formData = new FormData();
-      const file = e.target.files[0];
-      formData.append("image", file);
-      setIsDisable(true);
-  
-      await fetch(apiUrl + "temp-images", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token()}`,
-        },
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          setIsDisable(false);
-          if (result.status == false) {
-            toast.error(result.errors.image[0]);
-          } else {
-            setImageId(result.data.id);
-          }
-        });
-    };
-  
+  };
+
 
   return (
     <>
@@ -100,9 +100,8 @@ const Create = () => {
                           required: "The name field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.name && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.name && "is-invalid"
+                          }`}
                       />
                       {errors.name && (
                         <p className="invalid-feedback">
@@ -121,9 +120,8 @@ const Create = () => {
                           required: "The Job Title field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.job_title && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.job_title && "is-invalid"
+                          }`}
                       />
                       {errors.job_title && (
                         <p className="invalid-feedback">
@@ -141,7 +139,7 @@ const Create = () => {
                         {...register("linkedin_url")}
                         type="text"
                         className={'form-control'}
-                      /> 
+                      />
                     </div>
 
 

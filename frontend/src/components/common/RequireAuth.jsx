@@ -1,17 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { AuthContext } from '../backend/context/Auth'
-import { useContext } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom';
 
-const RequireAuth = ({ children }) => {
-  const { user } = useContext(AuthContext)
+const RequireAuth = ({children}) => {
+  const {user} = useContext(AuthContext);
+  const userInfo = localStorage.getItem('userInfo');
 
-  // Check if user exists and has a valid token
-  if (!user || !user.token) {
-    return <Navigate to='/admin/login' />
+  if(!user && !userInfo){
+    return <Navigate to='/admin/login'/>
   }
 
-  return children
+  return children;
 }
 
 export default RequireAuth

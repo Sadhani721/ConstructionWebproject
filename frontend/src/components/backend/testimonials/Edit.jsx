@@ -3,14 +3,14 @@ import Header from "../../common/Header";
 import Sidebar from "../../common/Sidebar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../../common/Footer";
-import { useForm } from "react-hook-form";
 import { apiUrl, fileUrl, token } from "../../common/http";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 
 const Edit = () => {
   const [isDisable, setIsDisable] = useState(false);
   const [imageId, setImageId] = useState(null);
-  const [testimonials, setTestimonials] = useState([]);
+  const [testimonial, setTestimonial] = useState([]);
   const params = useParams();
 
   const {
@@ -20,31 +20,44 @@ const Edit = () => {
     formState: { errors },
   } = useForm({
     defaultValues: async () => {
-      const res = await fetch(apiUrl + "testimonials/" + params.id, {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token()}`,
-        },
-      });
-      const result = await res.json();
-      setTestimonials(result.data);
+      try {
+        const res = await fetch(apiUrl + "testimonials/" + params.id, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token()}`,
+          },
+        });
+        const result = await res.json();
 
-      return {
-        testimonials: result.data.testimonials,
-        citation: result.data.citation,
-        designation: result.data.designation,
-        status: result.data.status,
-      };
+        if (result.status === false || !result.data) {
+          toast.error(result.message || "Failed to load testimonial data");
+          navigate("/admin/testimonials");
+          return {};
+        }
+
+        setTestimonial(result.data);
+        return {
+          name: result.data.name,
+          testimonial: result.data.testimonial,
+          designation: result.data.designation,
+          status: result.data.status,
+        };
+      } catch (error) {
+        console.error("Error loading testimonial:", error);
+        toast.error("Failed to load testimonial data. Please try again.");
+        navigate("/admin/testimonials");
+        return {};
+      }
     },
   });
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, imageId: imageId };
-    const res = await fetch(apiUrl + "testimonials/"+params.id, {
+    const newData = { ...data, image_id: imageId };
+    const res = await fetch(apiUrl + "testimonials/" + params.id, {
       method: "PUT",
       headers: {
         "Content-type": "application/json",
@@ -119,9 +132,8 @@ const Edit = () => {
                         {...register("testimonial", {
                           required: "The testimonial field is required",
                         })}
-                        className={`form-control ${
-                          errors.testimonial && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.testimonial && "is-invalid"
+                          }`}
                         rows={4}
                       ></textarea>
                       {errors.testimonial && (
@@ -137,17 +149,16 @@ const Edit = () => {
                       </label>
                       <input
                         placeholder="Citation"
-                        {...register("citation", {
+                        {...register("name", {
                           required: "The citation field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.citation && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.name && "is-invalid"
+                          }`}
                       />
-                      {errors.citation && (
+                      {errors.name && (
                         <p className="invalid-feedback">
-                          {errors.citation?.message}
+                          {errors.name?.message}
                         </p>
                       )}
                     </div>
@@ -169,21 +180,12 @@ const Edit = () => {
                         Image
                       </label>
                       <br />
-                      <input onChange={handleFile} type="file" />
+                      <input onChange={handleFile} type="file" accept="image/jpeg,image/png,image/jpg,image/gif" />
                     </div>
 
-                    <div className="pb-3">
-                      {testimonials.image && (
-                        <img
-                          src={
-                            fileUrl +
-                            "uploads/testimonials/" +
-                            testimonials.image
-                          }
-                          alt=""
-                        />
-                      )}
-                    </div>
+                    {testimonial.image &&
+                      <img width={100} src={fileUrl + "uploads/testimonials/" + testimonial.image} alt="" />
+                    }
 
                     <div className="mb-3">
                       <label htmlFor="" className="form-lable">

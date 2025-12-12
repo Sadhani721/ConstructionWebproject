@@ -21,7 +21,7 @@ const Create = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, imageId: imageId };
+    const newData = { ...data, image_id: imageId };
     const res = await fetch(apiUrl + "testimonials", {
       method: "POST",
       headers: {
@@ -32,7 +32,7 @@ const Create = () => {
       body: JSON.stringify(newData),
     });
     const result = await res.json();
-    
+
     if (result.status == true) {
       toast.success(result.message);
       navigate("/admin/testimonials");
@@ -94,7 +94,7 @@ const Create = () => {
                       </label>
                       <textarea
                         placeholder="Testimonial"
-                        {...register("testimonial",{
+                        {...register("testimonial", {
                           required: "The testimonial field is required",
                         })}
                         className={`form-control ${errors.testimonial && "is-invalid"}`}
@@ -113,17 +113,16 @@ const Create = () => {
                       </label>
                       <input
                         placeholder="Citation"
-                        {...register("citation", {
+                        {...register("name", {
                           required: "The citation field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.citation && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.name && "is-invalid"
+                          }`}
                       />
-                      {errors.citation && (
+                      {errors.name && (
                         <p className="invalid-feedback">
-                          {errors.citation?.message}
+                          {errors.name?.message}
                         </p>
                       )}
                     </div>
@@ -146,7 +145,7 @@ const Create = () => {
                         Image
                       </label>
                       <br />
-                      <input onChange={handleFile} type="file" />
+                      <input onChange={handleFile} type="file" accept="image/jpeg,image/png,image/jpg,image/gif" />
                     </div>
 
                     <div className="mb-3">

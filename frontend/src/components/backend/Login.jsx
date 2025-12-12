@@ -15,57 +15,33 @@ const Login = () => {
     watch,
     formState: { errors },
   } = useForm()
+const onSubmit = async (data) => {
+    console.log('Attempting login with:', data); 
+    const res = await fetch("http://127.0.0.1:8000/api/authenticate",{
+      method : 'POST',
+      headers : {
+        'Content-type' : 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
 
-  const onSubmit = async (data) => {
-    console.log("Attempting login with:", data);
-    
-    try {
-      const res = await fetch("http://localhost:8000/api/authenticate",{
-        method : 'POST',
-        headers : {
-          'Content-Type' : 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    const result = await res.json();
+    console.log('API Response:', result); 
 
-      console.log("Response status:", res.status);
-      console.log("Response ok:", res.ok);
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Error response:", errorText);
-        throw new Error(`HTTP error! status: ${res.status}`);
+    if(result.status==false){
+      console.log('Login failed:', result.message); 
+      toast.error(result.message)
+    }else{
+      console.log('Login successful, navigating...'); 
+      const userInfo={
+        id:result.id,
+        token:result.token
       }
-
-      const result = await res.json();
-      console.log("Authentication response:", result);
-
-      if(result.status==false){
-        toast.error(result.message || "Invalid email or password");
-      }else{
-        const userInfo={
-          id:result.id,
-          token:result.token
-        }
-        localStorage.setItem('userInfo',JSON.stringify(userInfo))
-        login(userInfo);
-        toast.success("Login successful!");
-        navigate('/admin/dashboard');
-      }
-    } catch (error) {
-      console.error("Login error details:", error);
-      
-      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-        toast.error("Network Error: Cannot connect to server. Make sure backend is running on port 8000.");
-      } else if (error.message.includes('HTTP error')) {
-        toast.error(`Server responded with error: ${error.message}`);
-      } else {
-        toast.error(`Connection Error: ${error.message}`);
-      }
+      localStorage.setItem('userInfo',JSON.stringify(userInfo))
+      login(userInfo);
+      navigate('/admin/dashboard');
     }
-  }
-
+}
   return (
       <>
           <Header/>

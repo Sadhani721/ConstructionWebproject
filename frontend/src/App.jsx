@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; // ✅ Added Route here
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
 import Home from './components/Home';
 import About from './components/About';
 import Services from './components/frontend/Services';
@@ -15,6 +15,7 @@ import Login from './components/backend/Login';
  import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './components/backend/Dashboard';
 import RequireAuth from './components/common/RequireAuth';
+
 
 import {default as ShowServices} from './components/backend/services/Show';
 import {default as CreateServices} from './components/backend/services/Create';
@@ -43,13 +44,16 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} /> {/* ✅ Route now works */}
+          <Route path="/" element={<Home />} /> 
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/projects" element={<Project/>} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/service/:id" element={<ServiceDetail />} />
           <Route path="/project/:id" element={<ProjectDetail />} />
+          
+          
+
           
            <Route path="/admin/login" element={<Login />} />
 

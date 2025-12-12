@@ -10,6 +10,17 @@ const ProjectDetail = () => {
 
     const params = useParams();
     const [project, setProject] = useState([]);
+    const [projects, setProjects] = useState([]);
+
+    const fetchProjects = async () => {
+    const res = await fetch(`${apiUrl}get-projects`,{
+        method: 'GET'
+    });
+    const result = await res.json();
+    setProjects(result.data);
+  }
+
+
   
     const fetchProject = async () => {
         const res = await fetch(`${apiUrl}get-project/${params.id}`,{
@@ -21,8 +32,9 @@ const ProjectDetail = () => {
   
   
     useEffect(() => {
-        fetchProject();
-      },[]);
+    fetchProjects();
+    fetchProject();
+  }, [params.id]);
 
   return (
     <>
@@ -40,29 +52,18 @@ const ProjectDetail = () => {
                   <div className="col-md-4">
                       <div className="card shadow border-0 sidebar">
                           <div className="card-body px-4 py-4">
-                              <h3 className="mt-2 mb-3">Insights</h3>
+                              <h3 className="mt-2 mb-3">Our Projects</h3>
                               <ul>
                                  {
-                                  project.location && 
-                                  <li className="mb-2">
-                                    <span className="text-body-secondary">Location</span>
-                                    <p>{project.location}</p>
-                                  </li>
-                                 }
-                                 {
-                                  project.construction_type && 
-                                  <li className="mb-2">
-                                    <span className="text-body-secondary">Construction Type</span>
-                                    <p>{project.construction_type}</p>
-                                  </li>
-                                 }
-                                 {
-                                  project.sector && 
-                                  <li className="mb-2">
-                                    <span className="text-body-secondary">Sector</span>
-                                    <p>{project.sector}</p>
-                                  </li>
-                                 }
+                                    project && projects.map(project => {
+                                      return (
+                                        <li key={`project-${project.id}`}>
+                                           <Link to={`/project/${project.id}`} >{project.title}</Link>
+                                        </li>
+                                      )
+                                    })
+                                  } 
+
                               </ul>
                           </div>
                       </div>

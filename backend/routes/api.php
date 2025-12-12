@@ -103,18 +103,22 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Projects Routes
     Route::post('projects', [ProjectController::class, 'store']);
+    Route::get('projects', [ProjectController::class, 'index']);
+    Route::get('projects/{id}', [ProjectController::class, 'show']);
+    Route::put('projects/{id}', [ProjectController::class, 'update']);
+    Route::delete('projects/{id}', [ProjectController::class, 'destroy']);
     
     // Testimonials Routes (Admin)
     Route::post('testimonials', [TestimonialController::class, 'store']);
-    Route::get('admin/testimonials', [TestimonialController::class, 'index']);
-    Route::get('admin/testimonials/{id}', [TestimonialController::class, 'show']);
+    Route::get('testimonials', [TestimonialController::class, 'index']);
+    Route::get('testimonials/{id}', [TestimonialController::class, 'show']);
     Route::put('testimonials/{id}', [TestimonialController::class, 'update']);
     Route::delete('testimonials/{id}', [TestimonialController::class, 'destroy']);
     
     // Members Routes (Admin)
     Route::post('members', [MemberController::class, 'store']);
-    Route::get('admin/members', [MemberController::class, 'index']);
-    Route::get('admin/members/{id}', [MemberController::class, 'show']);
+    Route::get('members', [MemberController::class, 'index']);
+    Route::get('members/{id}', [MemberController::class, 'show']);
     Route::put('members/{id}', [MemberController::class, 'update']);
     Route::delete('members/{id}', [MemberController::class, 'destroy']);
     

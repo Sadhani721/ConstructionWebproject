@@ -23,7 +23,7 @@ const Show = () => {
   };
 
   const deleteTestimonial = async (id) => {
-    if (confirm("are you sure you want to delete")) {
+    try {
       const res = await fetch(apiUrl + "testimonials/" + id, {
         method: "DELETE",
         headers: {
@@ -41,7 +41,10 @@ const Show = () => {
       } else {
         toast.error(result.message);
       }
-    }  
+    } catch (error) {
+      console.error("Error deleting testimonial:", error);
+      toast.error("Failed to delete testimonial. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -89,7 +92,7 @@ const Show = () => {
                             <tr key={`service-${testimonial.id}`}>
                               <td>{testimonial.id}</td>
                               <td>{testimonial.testimonial}</td>
-                              <td>{testimonial.citation}</td>
+                              <td>{testimonial.name}</td>
                               <td>
                                 {testimonial.status == 1 ? "Active" : "block"}
                               </td>
@@ -100,15 +103,15 @@ const Show = () => {
                                 >
                                   Edit
                                 </Link>
-                                <Link
+                                <button
+                                  type="button"
                                   onClick={() =>
                                     deleteTestimonial(testimonial.id)
                                   }
-                                  href="#"
                                   className="btn btn-danger btn-sm ms-2"
                                 >
                                   DELETE
-                                </Link>
+                                </button>
                               </td>
                             </tr>
                           );

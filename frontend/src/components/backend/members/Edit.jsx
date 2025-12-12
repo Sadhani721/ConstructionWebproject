@@ -20,29 +20,43 @@ const Edit = () => {
     formState: { errors },
   } = useForm({
     defaultValues: async () => {
-      const res = await fetch(apiUrl + "members/" + params.id, {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token()}`,
-        },
-      });
-      const result = await res.json();
-      setMember(result.data);
-      return {
-        name: result.data.name,
-        job_title: result.data.job_title,
-        linkedin_url: result.data.linkedin_url,
-        status: result.data.status,
-      };
+      try {
+        const res = await fetch(apiUrl + "members/" + params.id, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token()}`,
+          },
+        });
+        const result = await res.json();
+
+        if (result.status === false || !result.data) {
+          toast.error(result.message || "Failed to load member data");
+          navigate("/admin/members");
+          return {};
+        }
+
+        setMember(result.data);
+        return {
+          name: result.data.name,
+          job_title: result.data.job_title,
+          linkedin_url: result.data.linkedin_url,
+          status: result.data.status,
+        };
+      } catch (error) {
+        console.error("Error loading member:", error);
+        toast.error("Failed to load member data. Please try again.");
+        navigate("/admin/members");
+        return {};
+      }
     },
   });
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, imageId: imageId };
+    const newData = { ...data, image_id: imageId };
     const res = await fetch(apiUrl + "members/" + params.id, {
       method: "PUT",
       headers: {
@@ -119,9 +133,8 @@ const Edit = () => {
                           required: "The name field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.name && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.name && "is-invalid"
+                          }`}
                       />
                       {errors.name && (
                         <p className="invalid-feedback">
@@ -140,9 +153,8 @@ const Edit = () => {
                           required: "The Job Title field is required",
                         })}
                         type="text"
-                        className={`form-control ${
-                          errors.job_title && "is-invalid"
-                        }`}
+                        className={`form-control ${errors.job_title && "is-invalid"
+                          }`}
                       />
                       {errors.job_title && (
                         <p className="invalid-feedback">
@@ -171,8 +183,8 @@ const Edit = () => {
                       <input onChange={handleFile} type="file" accept="image/jpeg,image/png,image/jpg,image/gif" />
                     </div>
 
-                    {member.image && 
-                    <img width={100} src={fileUrl+ "uploads/members/" + member.image} alt=""/>
+                    {member.image &&
+                      <img width={100} src={fileUrl + "uploads/members/" + member.image} alt="" />
                     }
 
                     <div className="mb-3">

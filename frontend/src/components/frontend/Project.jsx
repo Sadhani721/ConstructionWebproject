@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 const Projects = () => {
   const [projects, setProjects] = useState([]);
 
-  const fetchProjects = async () => {
+  const fetchAllProjects = async () => {
     const res = await fetch(apiUrl + "get-projects", {
       method: "GET",
     });
@@ -21,7 +21,7 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    fetchProjects();
+    fetchAllProjects();
   }, []);
 
   return (

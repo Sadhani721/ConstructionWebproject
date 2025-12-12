@@ -23,7 +23,7 @@ const Show = () => {
   };
 
   const deleteService = async (id) => {
-    if (confirm("are you sure you want to delete")) {
+    try {
       const res = await fetch(apiUrl + "services/" + id, {
         method: "DELETE",
         headers: {
@@ -41,6 +41,9 @@ const Show = () => {
       } else {
         toast.error(result.message);
       }
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      toast.error("Failed to delete service. Please try again.");
     }
   };
 
@@ -101,13 +104,13 @@ const Show = () => {
                                 >
                                   Edit
                                 </Link>
-                                <Link
+                                <button
+                                  type="button"
                                   onClick={() => deleteService(service.id)}
-                                  href="#"
                                   className="btn btn-danger btn-sm ms-2"
                                 >
                                   DELETE
-                                </Link>
+                                </button>
                               </td>
                             </tr>
                           );
